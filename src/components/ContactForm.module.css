@@ -14,10 +14,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 300px;
-  height: auto;
-  min-height: 150px;
-  box-sizing: border-box;
 }
 
 .input {
