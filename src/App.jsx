@@ -6,19 +6,35 @@ import SearchBox from "./components/SearchBox";
 import "./App.css";
 
 const App = () => {
-  const [contacts, setContacts] = useState([]);
+  const [contacts, setContacts] = useState(() => {
+    const savedContacts = localStorage.getItem("contacts");
+    return savedContacts ? JSON.parse(savedContacts) : [];
+  });
+
   const [filter, setFilter] = useState("");
 
   useEffect(() => {
-    fetch("/ContactListData.json")
-      .then((response) => response.json())
-      .then((data) => {
-        setContacts(data);
-      })
-      .catch((error) => {
-        console.error("Error while loading contact data:", error);
-      });
+    const savedContacts = localStorage.getItem("contacts");
+    if (!savedContacts) {
+      fetch("/ContactListData.json")
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          setContacts(data);
+        })
+        .catch((error) => {
+          console.error("Error while loading contact data:", error);
+        });
+    }
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem("contacts", JSON.stringify(contacts));
+  }, [contacts]);
 
   const addContact = ({ name, number }) => {
     const newContact = { id: nanoid(), name, number };
@@ -42,13 +58,8 @@ const App = () => {
   return (
     <div className="App">
       <h1>Phonebook</h1>
-      {}
       <ContactForm onSubmit={addContact} />
-
-      {}
       <SearchBox value={filter} onChange={handleFilterChange} />
-
-      {}
       <ContactList contacts={filteredContacts} onDelete={deleteContact} />
     </div>
   );
