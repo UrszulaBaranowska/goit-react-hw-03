@@ -10,7 +10,7 @@ const App = () => {
   const [filter, setFilter] = useState("");
 
   useEffect(() => {
-    fetch("/public/ContactListData.json")
+    fetch("/ContactListData.json")
       .then((response) => response.json())
       .then((data) => {
         setContacts(data);
